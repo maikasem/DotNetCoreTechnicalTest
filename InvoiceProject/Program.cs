@@ -32,7 +32,7 @@ namespace InvoiceProject
         {
             Console.WriteLine("Welcome to Xero Tech Test!");
 
-            CreateInvoiceWithOneIte();
+            CreateInvoiceWithOneItem();
             CreateInvoiceWithMultipleItemsAndQuantities();
             RemoveItem();
             MergeInvoices();
@@ -43,69 +43,24 @@ namespace InvoiceProject
         private static void CreateInvoiceWithOneItem()
         {
             var invoice = new Invoice();
-
-            invoice.AddInvoiceLine(new InvoiceLine()
-            {
-                InvoiceLineId = 1,
-                Cost = 6.99,
-                Quantity = 1,
-                Description = "Apple"
-            });
-
+            invoice.AddInvoiceLine(new InvoiceLine(1, 6.99m, 1, "Apple"));
             Console.WriteLine(invoice.GetTotal());
         }
 
         private static void CreateInvoiceWithMultipleItemsAndQuantities()
         {
             var invoice = new Invoice();
-
-            invoice.AddInvoiceLine(new InvoiceLine()
-            {
-                InvoiceLineId = 1,
-                Cost = 10.21m,
-                Quantity = 4,
-                Description = "Banana"
-            });
-
-            invoice.AddInvoiceLine(new InvoiceLine()
-            {
-                InvoiceLineId = 2,
-                Cost = 5.21,
-                Quantity = 1,
-                Description = "Orange"
-            });
-
-            invoice.AddInvoiceLine(new InvoiceLine()
-            {
-                InvoiceLineId = 3,
-                Cost = 5.21,
-                Quantity = 5,
-                Description = "Pineapple"
-            });
-
+            invoice.AddInvoiceLine(new InvoiceLine(1, 10.21m, 4, "Banana"));
+            invoice.AddInvoiceLine(new InvoiceLine(2, 5.21m, 1, "Orange"));
+            invoice.AddInvoiceLine(new InvoiceLine(3, 5.21m, 5, "Pineapple"));
             Console.WriteLine(invoice.GetTotal());
         }
 
         private static void RemoveItem()
         {
             var invoice = new Invoice();
-
-            invoice.AddInvoiceLine(new InvoiceLine()
-            {
-                InvoiceLineId = 1,
-                Cost = 5.21,
-                Quantity = 1,
-                Description = "Orange"
-            });
-
-            invoice.AddInvoiceLine(new InvoiceLine()
-            {
-                InvoiceLineId = 2,
-                Cost = 10.99,
-                Quantity = 4,
-                Description = "Banana"
-            });
-
+            invoice.AddInvoiceLine(new InvoiceLine(1, 5.21m, 1, "Orange"));
+            invoice.AddInvoiceLine(new InvoiceLine(2, 10.99m, 4, "Banana"));
             invoice.RemoveInvoiceLine(1);
             Console.WriteLine(invoice.GetTotal());
         }
@@ -113,32 +68,11 @@ namespace InvoiceProject
         private static void MergeInvoices()
         {
             var invoice1 = new Invoice();
-
-            invoice1.AddInvoiceLine(new InvoiceLine()
-            {
-                InvoiceLineId = 1,
-                Cost = 10.33,
-                Quantity = 4,
-                Description = "Banana"
-            });
+            invoice1.AddInvoiceLine(new InvoiceLine(1, 10.33m, 4, "Banana"));
 
             var invoice2 = new Invoice();
-
-            invoice2.AddInvoiceLine(new InvoiceLine()
-            {
-                InvoiceLineId = 2,
-                Cost = 5.22,
-                Quantity = 1,
-                Description = "Orange"
-            });
-
-            invoice2.AddInvoiceLine(new InvoiceLine()
-            {
-                InvoiceLineId = 3,
-                Cost = 6.27,
-                Quantity = 3,
-                Description = "Blueberries"
-            });
+            invoice2.AddInvoiceLine(new InvoiceLine(2, 5.22m, 1, "Orange"));
+            invoice2.AddInvoiceLine(new InvoiceLine(3, 6.27m, 3, "Blueberries"));
 
             invoice1.MergeInvoices(invoice2);
             Console.WriteLine(invoice1.GetTotal());
@@ -147,45 +81,17 @@ namespace InvoiceProject
         private static void CloneInvoice()
         {
             var invoice = new Invoice();
-
-            invoice.AddInvoiceLine(new InvoiceLine()
-            {
-                InvoiceLineId = 1,
-                Cost = 6.99,
-                Quantity = 1,
-                Description = "Apple"
-            });
-
-            invoice.AddInvoiceLine(new InvoiceLine()
-            {
-                InvoiceLineId = 2,
-                Cost = 6.27,
-                Quantity = 3,
-                Description = "Blueberries"
-            });
-
+            invoice.AddInvoiceLine(new InvoiceLine(1, 6.99m, 1, "Apple"));
+            invoice.AddInvoiceLine(new InvoiceLine(2, 6.27m, 3, "Blueberries"));
             var clonedInvoice = invoice.Clone();
             Console.WriteLine(clonedInvoice.GetTotal());
         }
 
         private static void InvoiceToString()
         {
-            var invoice = new Invoice()
-            {
-                InvoiceDate = DateTime.Now,
-                InvoiceNumber = 1000,
-                LineItems = new List<InvoiceLine>()
-                {
-                    new InvoiceLine()
-                    {
-                        InvoiceLineId = 1,
-                        Cost = 6.99,
-                        Quantity = 1,
-                        Description = "Apple"
-                    }
-                }
-            };
-
+            var invoice = new Invoice(DateTime.Now, 1000);
+            invoice.AddInvoiceLine(new InvoiceLine(1, 6.99m, 1, "Apple"));
             Console.WriteLine(invoice.ToString());
         }
     }
+}

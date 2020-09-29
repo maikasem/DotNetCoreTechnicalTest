@@ -1,22 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace InvoiceProject
 {
-    public class Invoice
+     [Serializable]
+     public class Invoice
     {
+        public Invoice(){}
+
+        public Invoice(DateTime invoiceDate, int invoiceNumber){
+            this.InvoiceDate = invoiceDate;
+            this.InvoiceNumber = invoiceNumber;
+        }
+
         public int InvoiceNumber { get; set; }
         public DateTime InvoiceDate { get; set; }
-        public List<InvoiceLine> LineItems { get; set; }
+        public List<InvoiceLine> LineItems = new List<InvoiceLine>();
 
         public void AddInvoiceLine(InvoiceLine invoiceLine)
         {
-            LineItems.Add(invoiceLine);
+            if(invoiceLine != null) {
+                LineItems.Add(invoiceLine);
+            } else {
+                Console.WriteLine("Warning: null invoiceLine detected. The item won't be added to the invoice");
+            }
         }
 
-        public void RemoveInvoiceLine(int SOMEID)
+        public void RemoveInvoiceLine(int invoiceLineIndex)
         {
-            throw new NotImplementedException();
+            if(invoiceLineIndex>=0 && invoiceLineIndex<LineItems.Count) {
+                LineItems.RemoveAt(invoiceLineIndex);
+            } else {
+                Console.WriteLine(String.Format("ERROR: out of bound index passed to the RemoveInvoiceLine method. List Size:{0} passed index:{1}", LineItems.Count, invoiceLineIndex));
+            }
         }
 
         /// <summary>
@@ -24,7 +42,12 @@ namespace InvoiceProject
         /// </summary>
         public decimal GetTotal()
         {
-            throw new NotImplementedException();
+            decimal total = 0m;
+            for(int i=0;i<LineItems.Count;i++) {
+                InvoiceLine invoiceLine = LineItems[i];
+                total += invoiceLine.Cost*invoiceLine.Quantity;
+            }
+           return total;
         }
 
         /// <summary>
@@ -33,7 +56,9 @@ namespace InvoiceProject
         /// <param name="sourceInvoice">Invoice to merge from</param>
         public void MergeInvoices(Invoice sourceInvoice)
         {
-            throw new NotImplementedException();
+            if(sourceInvoice!=null){
+                LineItems.AddRange(sourceInvoice.LineItems);
+            }
         }
 
         /// <summary>
@@ -41,7 +66,16 @@ namespace InvoiceProject
         /// </summary>
         public Invoice Clone()
         {
-            throw new NotImplementedException();
+            using (MemoryStream stream = new MemoryStream())
+            {
+                if (this.GetType().IsSerializable) {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, this);
+                    stream.Position = 0;
+                    return (Invoice)formatter.Deserialize(stream);
+                } 
+            }
+            return null;
         }
 
         /// <summary>
@@ -50,7 +84,8 @@ namespace InvoiceProject
         /// </summary>
         public override string ToString()
         {
-            throw new NotImplementedException();
+            return String.Format("Invoice Number: {0}, InvoiceDate: {1}, LineItemCount: {2}", InvoiceNumber, InvoiceDate.ToString("dd/MM/yyyy"), LineItems.Count);
         }
+
     }
 }
